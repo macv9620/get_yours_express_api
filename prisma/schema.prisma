@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model brand {
+  id                           Int       @id @default(autoincrement())
+  name                         String    @db.VarChar(20)
+  product_product_brandTobrand product[] @relation("product_brandTobrand")
+}
+
+model category {
+  id                                 Int       @id @default(autoincrement())
+  name                               String    @db.VarChar(20)
+  product_product_categoryTocategory product[] @relation("product_categoryTocategory")
+}
+
+model gender {
+  id                       Int    @id @default(autoincrement())
+  identity                 String @db.VarChar(10)
+  user_user_genderTogender user[] @relation("user_genderTogender")
+}
+
+model order {
+  id                    Int             @id @default(autoincrement())
+  user                  Int
+  date                  DateTime        @db.Timestamp(6)
+  user_order_userTouser user            @relation("order_userTouser", fields: [user], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  order_product         order_product[]
+}
+
+model order_product {
+  order_id   Int
+  product_id Int
+  id         Int     @id @default(autoincrement())
+  product_q  Int?
+  order      order   @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  product    product @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model product {
+  id                                  Int             @id @default(autoincrement())
+  name                                String
+  description                         String
+  price                               Int
+  category                            Int
+  brand                               Int
+  sku                                 String
+  image                               String
+  status                              Int
+  order_product                       order_product[]
+  brand_product_brandTobrand          brand           @relation("product_brandTobrand", fields: [brand], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  category_product_categoryTocategory category        @relation("product_categoryTocategory", fields: [category], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  status_product_statusTostatus       status          @relation("product_statusTostatus", fields: [status], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model role {
+  id                   Int    @id @default(autoincrement())
+  type                 String @db.VarChar(10)
+  user_user_roleTorole user[] @relation("user_roleTorole")
+}
+
+model status {
+  id                             Int       @id @default(autoincrement())
+  name                           String    @db.VarChar(10)
+  product_product_statusTostatus product[] @relation("product_statusTostatus")
+}
+
+model user {
+  id                         Int     @id @default(autoincrement())
+  first_name                 String  @db.VarChar(50)
+  last_name                  String  @db.VarChar(50)
+  gender                     Int
+  email                      String
+  password                   String
+  role                       Int
+  order_order_userTouser     order[] @relation("order_userTouser")
+  gender_user_genderTogender gender  @relation("user_genderTogender", fields: [gender], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  role_user_roleTorole       role    @relation("user_roleTorole", fields: [role], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
