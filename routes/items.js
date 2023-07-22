@@ -25,7 +25,10 @@ router.get('/', async function(req, res, next) {
         {
           id: 'desc'
         }
-      ]
+      ],
+      where: {
+        status: 1
+      }
     })
     const detail = items.map((item)=> {
   
@@ -54,10 +57,6 @@ router.get('/', async function(req, res, next) {
     res.status(500).send({"message": err.message})
   }
 });
-
-
-
-
 
 function validateToken (secret) {
   return (req, res, next) => {
@@ -99,5 +98,38 @@ router.post('/', validateToken(secret), async function(req, res, next) {
     console.log(err.message)
   }
   });
+
+
+  // Eliminar un producto con base en un ID
+router.delete('/', validateToken(secret), async (req, res) => {
+
+  try {
+    const { id } = req.body
+    if (!id) {
+      res.status(400).send({
+        message: 'A product Id es required'
+      })
+      return
+    }
+
+    const deletedProduct = await prisma.product.update({
+      where: {
+        id: Number(id),
+      },
+      data: {
+        status: 2,
+      },
+    })
+    
+    res.send({
+      message: 'Product deleted successfully',
+      data: deletedProduct
+    })
+  } catch(err) {
+    res.status(500).send(err.message)
+    console.log(err.message)
+  }
+  
+})
 
 module.exports = router;
