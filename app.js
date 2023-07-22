@@ -13,6 +13,9 @@ const itemsRouter = require('./routes/items');
 const categoriesRouter = require('./routes/categories');
 const brandsRouter = require('./routes/brands');
 const statusRouter = require('./routes/status');
+const genderRouter = require('./routes/gender');
+const roleRouter = require('./routes/role');
+const usersRouter = require('./routes/users');
 
 const app = express();
 
@@ -26,6 +29,9 @@ app.use('/items', itemsRouter);
 app.use('/categories', categoriesRouter);
 app.use('/brands', brandsRouter);
 app.use('/status', statusRouter);
+app.use('/gender', genderRouter);
+app.use('/role', roleRouter);
+app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
