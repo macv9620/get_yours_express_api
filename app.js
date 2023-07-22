@@ -16,6 +16,7 @@ const statusRouter = require('./routes/status');
 const genderRouter = require('./routes/gender');
 const roleRouter = require('./routes/role');
 const usersRouter = require('./routes/users');
+const loginRouter = require('./routes/login');
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use('/status', statusRouter);
 app.use('/gender', genderRouter);
 app.use('/role', roleRouter);
 app.use('/users', usersRouter);
+app.use('/login', loginRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

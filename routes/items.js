@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const {PrismaClient} = require('@prisma/client');
+const secret = 'my-secret-key';
+const jwt = require('jsonwebtoken')
 
 const prisma = new PrismaClient()
 
@@ -18,7 +20,12 @@ router.get('/', async function(req, res, next) {
           brand_product_brandTobrand: true,
           status_product_statusTostatus: true,
           category_product_categoryTocategory: true
-      }
+      },
+      orderBy:[
+        {
+          id: 'desc'
+        }
+      ]
     })
     const detail = items.map((item)=> {
   
@@ -48,24 +55,48 @@ router.get('/', async function(req, res, next) {
   }
 });
 
+
+
+
+
+function validateToken (secret) {
+  return (req, res, next) => {
+    const { authorization } = req.headers
+    if (!authorization || !authorization.startsWith('Bearer ')) {
+      res.sendStatus(401)
+      return
+    }
+    const token = authorization.slice(7)
+    try {
+      const payload = jwt.verify(token, secret)
+      req.user = payload
+      next()
+    } catch (error) {
+      res.sendStatus(401)
+    }
+  }
+}
+
+
 /* POST create items */
-router.post('/', async function(req, res, next) {
+router.post('/', validateToken(secret), async function(req, res, next) {
   try{
     const item = await prisma.product.create({
       data: {
-        name: req.body.name,
+        name: req.body.product_name,
         description: req.body.description,
-        price: req.body.price,
-        category: req.body.category,
-        brand: req.body.brand,
+        price: Number(req.body.price),
+        category: Number(req.body.category),
+        brand: Number(req.body.brand),
         sku: req.body.sku,
         image: req.body.image,
-        status: req.body.status
+        status: 1
       }
     })
-    res.status(200).send(item)
+    res.status(200).send({ message: 'Item created successfully' , data: item})
   } catch(err){
     res.status(500).send({"message": err.message})
+    console.log(err.message)
   }
   });
 
