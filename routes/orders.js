@@ -148,6 +148,9 @@ router.post("/search", validateToken(secret), async function (req, res, next) {
                 }
               }
             }
+          },
+          orderBy: {
+            id: 'desc'
           }
         }
       },
