@@ -58,7 +58,6 @@ router.post('/', async function(req, res, next) {
                 email: true
             }
         })
-        console.log(emails)
         const emailExists = emails.find((dbEmail) => dbEmail.email === email)
         if (!emailExists) {
 

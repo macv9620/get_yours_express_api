@@ -78,8 +78,6 @@ function validateToken(secret) {
 /* POST create order */
 router.post("/", validateToken(secret), async function (req, res, next) {
   try {
-    console.log("userrrr", req.user);
-    console.log(req.body.date);
     const order = await prisma.order.create({
       data: {
         user: req.body.userId,
@@ -132,5 +130,53 @@ router.post(
     );
   }
 );
+
+
+/* GET orders */
+router.post("/search", validateToken(secret), async function (req, res, next) {
+  try {
+    const orders = await prisma.user.findMany({
+      include: {
+        order_order_userTouser: {
+          include: {
+            order_product: {
+              include: {
+                product: {
+                  include: {
+                    category_product_categoryTocategory: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      where: {
+        id: Number(req.body.id)
+      }
+    })
+    if(orders.length === 0){
+      res.status(200).send({
+        result: 'NO-ORDERS',
+        message: `No orders found for user ${req.body.id}`,
+      })
+      return
+    }
+    const response = {
+      result: 'ORDERS',
+      message: 'X orders found for USER',
+      userInfo: [
+        ...orders[0].order_order_userTouser
+      ]
+    }
+
+    res
+      .status(200)
+      .send({ message: "Orders", data: response });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+    console.log(err.message);
+  }
+});
 
 module.exports = router;

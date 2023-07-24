@@ -25,7 +25,6 @@ router.post('/', async function(req, res, next) {
   })
 
   const user = users.find((user) => user.email === email)
-  console.log(user)
 
   if (user) {
     bcrypt.compare(password, user.password, (err, result) => {
