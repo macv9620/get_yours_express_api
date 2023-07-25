@@ -182,4 +182,49 @@ router.post("/search", validateToken(secret), async function (req, res, next) {
   }
 });
 
+/* GET orders */
+router.post("/searchAll", validateToken(secret), async function (req, res, next) {
+  try {
+    const orders = await prisma.user.findMany({
+      include: {
+        order_order_userTouser: {
+          include: {
+            order_product: {
+              include: {
+                product: {
+                  include: {
+                    category_product_categoryTocategory: true
+                  }
+                }
+              }
+            }
+          },
+          orderBy: {
+            id: 'desc'
+          }
+        }
+      }
+    })
+    if(orders.length === 0){
+      res.status(200).send({
+        result: 'NO-ORDERS',
+        message: `No orders found for user ${req.body.id}`,
+      })
+      return
+    }
+    const response = {
+      result: 'ORDERS',
+      message: 'X orders found for USER',
+      ordersInfo: orders
+    }
+
+    res
+      .status(200)
+      .send({ message: "Orders", data: response });
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+    console.log(err.message);
+  }
+});
+
 module.exports = router;
