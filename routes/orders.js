@@ -197,6 +197,7 @@ router.post("/searchAll", validateToken(secret), async function (req, res, next)
                   }
                 }
               }
+
             }
           },
           orderBy: {
