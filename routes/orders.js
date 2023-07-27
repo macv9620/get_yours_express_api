@@ -117,9 +117,13 @@ router.post(
           });
         };
         order_product()
-        if(order_product.length === index){
+        console.log('Product length', products.length, 'Index', index + 1)
+        if(products.length === index + 1){
+          setTimeout(() => {
             res.status(201)
             .send({ message: "Product added successfully"})
+          }, 1000);
+
         }
       } catch (err) {
         res.status(500).send({ message: err.message });
